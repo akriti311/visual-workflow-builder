@@ -1,16 +1,43 @@
-# React + Vite
+Visual Workflow Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple visual workflow editor built using React and React Flow.
 
-Currently, two official plugins are available:
+This project allows users to create nodes, connect them, edit labels, and organize workflows using different layout styles. It was built to better understand how graph-based UIs work and how node positioning affects rendering.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+⸻
 
-## React Compiler
+Features
+	•	Add and delete nodes dynamically
+	•	Connect nodes with edges
+	•	Edit node labels inline
+	•	Switch between light and dark themes
+	•	Apply different layout styles:
+	•	Vertical
+	•	Horizontal
+	•	Circular
+	•	Automatic saving using localStorage
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+  ## Preview
 
-## Expanding the ESLint configuration
+<p align="center">
+  <img src="./assets/preview.png" width="850" />
+</p>
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+⸻
+
+Tech Stack
+	•	React
+	•	React Flow (@xyflow/react)
+	•	Vite
+	•	CSS
+
+⸻
+
+Layout Implementation
+
+The layouts in this project are implemented manually instead of relying on external graph layout libraries.
+	•	Vertical Layout positions nodes with consistent vertical spacing.
+	•	Horizontal Layout aligns nodes in a row with fixed horizontal gaps.
+	•	Circular Layout distributes nodes evenly using trigonometric positioning (sine and cosine).
+
+This helped in understanding how coordinate systems and positioning work inside graph-based interfaces.
