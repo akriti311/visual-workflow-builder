@@ -4,14 +4,6 @@ A visual workflow editor built with **React** and **React Flow**. Create workflo
 
 ---
 
-## Preview
-
-<p align="center">
-  <img src="./assets/preview.png" width="850" alt="Visual Workflow Builder preview" />
-</p>
-
----
-
 ## Features
 
 - **Drag-and-drop canvas** — add nodes, connect edges, zoom and pan
