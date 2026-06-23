@@ -1,183 +1,43 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  MiniMap,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Handle,
-  Position,
-} from "@xyflow/react";
+import { useState } from "react";
 import "@xyflow/react/dist/style.css";
 import "./App.css";
-
-/* Initial nodes */
-const defaultNodes = [
-  { id: "1", position: { x: 100, y: 100 }, data: { label: "API Node" } },
-  { id: "2", position: { x: 400, y: 200 }, data: { label: "Database Node" } },
-];
-
-/* Initial edges */
-const defaultEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
-let nodeId = 3;
-
-/* Custom node component */
-const CustomNode = ({ id, data, selected }) => {
-  return (
-    <div className={`custom-node ${selected ? "selected" : ""}`}>
-      <Handle type="target" position={Position.Top} />
-
-      <input
-        value={data.label}
-        onChange={(e) => data.onChange(id, e.target.value)}
-        className="node-input"
-      />
-
-      <Handle type="source" position={Position.Bottom} />
-    </div>
-  );
-};
+import WorkflowCanvas from "./components/canvas/WorkflowCanvas.jsx";
+import ConnectErrorBanner from "./components/errors/ConnectErrorBanner.jsx";
+import ExecutionLogPanel from "./components/panels/ExecutionLogPanel.jsx";
+import PropertiesPanel from "./components/panels/PropertiesPanel.jsx";
+import Toolbar from "./components/toolbar/Toolbar.jsx";
+import { useExecution } from "./hooks/useExecution.js";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts.js";
+import { useWorkflow } from "./hooks/useWorkflow.js";
 
 export default function App() {
   const [theme, setTheme] = useState("dark");
-  const [showLayoutMenu, setShowLayoutMenu] = useState(false);
+  const workflow = useWorkflow();
 
-  const savedFlow = JSON.parse(localStorage.getItem("workflow"));
+  const execution = useExecution({
+    nodes: workflow.nodes,
+    edges: workflow.edges,
+    setNodes: workflow.setNodes,
+    onError: (message) => {
+      if (message) workflow.setConnectError(message);
+      else workflow.setConnectError(null);
+    },
+  });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(
-    savedFlow?.nodes || defaultNodes
-  );
+  useKeyboardShortcuts({
+    onUndo: workflow.undo,
+    onRedo: workflow.redo,
+    enabled: !execution.isRunning,
+  });
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState(
-    savedFlow?.edges || defaultEdges
-  );
-
-  const [selectedNode, setSelectedNode] = useState(null);
-
-  /* Save to localStorage whenever nodes or edges change */
-  useEffect(() => {
-    localStorage.setItem("workflow", JSON.stringify({ nodes, edges }));
-  }, [nodes, edges]);
-
-  /* Connect two nodes */
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
-  /* Add new node */
-  const addNewNode = () => {
-    const newNode = {
-      id: String(nodeId++),
-      position: { x: Math.random() * 400, y: Math.random() * 400 },
-      data: { label: `Node ${nodeId}` },
-    };
-
-    setNodes((nds) => [...nds, newNode]);
-  };
-
-  /* Vertical layout */
-  const applyVerticalLayout = () => {
-    const spacingY = 120;
-    const startX = 300;
-
-    const updatedNodes = nodes.map((node, index) => ({
-      ...node,
-      position: {
-        x: startX,
-        y: index * spacingY,
-      },
-    }));
-
-    setNodes(updatedNodes);
-  };
-
-  /* Horizontal layout */
-  const applyHorizontalLayout = () => {
-    const spacingX = 200;
-    const startY = 200;
-
-    const updatedNodes = nodes.map((node, index) => ({
-      ...node,
-      position: {
-        x: index * spacingX,
-        y: startY,
-      },
-    }));
-
-    setNodes(updatedNodes);
-  };
-
-  /* Circular layout */
-  const applyCircularLayout = () => {
-    const centerX = 400;
-    const centerY = 300;
-    const radius = 200;
-
-    const updatedNodes = nodes.map((node, index) => {
-      const angle = (index / nodes.length) * 2 * Math.PI;
-
-      return {
-        ...node,
-        position: {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-        },
-      };
-    });
-
-    setNodes(updatedNodes);
-  };
-
-  /* Update node label */
-  const updateNodeLabel = (id, newLabel) => {
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === id
-          ? { ...node, data: { ...node.data, label: newLabel } }
-          : node
-      )
-    );
-  };
-
-  /* Delete selected node */
-  const deleteSelectedNode = () => {
-    if (!selectedNode) return;
-
-    setNodes((nds) => nds.filter((node) => node.id !== selectedNode));
-
-    setEdges((eds) =>
-      eds.filter(
-        (edge) =>
-          edge.source !== selectedNode && edge.target !== selectedNode
-      )
-    );
-
-    setSelectedNode(null);
-  };
-
-  /* Clear everything */
-  const clearCanvas = () => {
-    setNodes([]);
-    setEdges([]);
-    localStorage.removeItem("workflow");
-  };
-
-  const nodesWithHandlers = nodes.map((node) => ({
-    ...node,
-    type: "custom",
-    data: { ...node.data, onChange: updateNodeLabel },
-  }));
+  const bannerMessage = workflow.connectError ?? workflow.importError;
 
   return (
     <div className={`app-container ${theme}`}>
       <div className="header">
         <h2>Workflow Builder</h2>
-
         <button
+          type="button"
           className="theme-toggle"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
@@ -185,66 +45,62 @@ export default function App() {
         </button>
       </div>
 
-      <div className="toolbar">
-        <button onClick={addNewNode}>Add</button>
+      <Toolbar
+        onAddNode={workflow.addNode}
+        onDelete={workflow.deleteSelectedNode}
+        onClear={workflow.clearCanvas}
+        onExport={workflow.exportWorkflow}
+        onImport={workflow.importWorkflow}
+        onUndo={workflow.undo}
+        onRedo={workflow.redo}
+        canUndo={workflow.canUndo}
+        canRedo={workflow.canRedo}
+        onRun={execution.run}
+        onStop={execution.stop}
+        onResetExecution={execution.reset}
+        isRunning={execution.isRunning}
+        onVerticalLayout={workflow.applyVerticalLayout}
+        onHorizontalLayout={workflow.applyHorizontalLayout}
+        onCircularLayout={workflow.applyCircularLayout}
+      />
 
-        {/* Layout dropdown */}
-        <div className="dropdown">
-          <button onClick={() => setShowLayoutMenu(!showLayoutMenu)}>
-            Layout
-          </button>
+      <ConnectErrorBanner
+        message={bannerMessage}
+        onDismiss={() => {
+          workflow.setConnectError(null);
+          workflow.setImportError(null);
+        }}
+      />
 
-          {showLayoutMenu && (
-            <div className="dropdown-menu">
-              <div
-                onClick={() => {
-                  applyVerticalLayout();
-                  setShowLayoutMenu(false);
-                }}
-              >
-                Vertical
-              </div>
+      <div className="workspace">
+        <WorkflowCanvas
+          nodes={workflow.nodes}
+          edges={workflow.edges}
+          isRunning={execution.isRunning}
+          onNodesChange={workflow.onNodesChange}
+          onEdgesChange={workflow.onEdgesChange}
+          onConnect={workflow.onConnect}
+          onConnectEnd={workflow.onConnectEnd}
+          isValidConnection={workflow.isValidConnection}
+          onNodeClick={(_event, node) => workflow.setSelectedNodeId(node.id)}
+          onPaneClick={() => workflow.setSelectedNodeId(null)}
+          onNodeDragStart={workflow.onNodeDragStart}
+        />
 
-              <div
-                onClick={() => {
-                  applyHorizontalLayout();
-                  setShowLayoutMenu(false);
-                }}
-              >
-                Horizontal
-              </div>
+        <aside className="sidebar">
+          <PropertiesPanel
+            node={workflow.selectedNode}
+            onUpdate={workflow.updateNodeData}
+            onEditStart={workflow.onPropertiesEditStart}
+            disabled={execution.isRunning}
+          />
 
-              <div
-                onClick={() => {
-                  applyCircularLayout();
-                  setShowLayoutMenu(false);
-                }}
-              >
-                Circular
-              </div>
-            </div>
-          )}
-        </div>
-
-        <button onClick={deleteSelectedNode}>Delete</button>
-        <button onClick={clearCanvas}>Clear</button>
-      </div>
-
-      <div className="flow-container">
-        <ReactFlow
-          nodes={nodesWithHandlers}
-          edges={edges}
-          nodeTypes={{ custom: CustomNode }}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={(event, node) => setSelectedNode(node.id)}
-          fitView
-        >
-          <Background gap={20} />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
+          <ExecutionLogPanel
+            logs={execution.logs}
+            status={execution.status}
+            topologicalOrder={execution.topologicalOrder}
+          />
+        </aside>
       </div>
     </div>
   );

@@ -68,6 +68,19 @@ button:active {
   transform: scale(0.97);
 }
 
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  opacity: 0.45;
+}
+
+button:disabled:active {
+  transform: none;
+}
+
 .theme-toggle {
   background: #0ea5e9;
 }
@@ -111,50 +124,465 @@ button:active {
   background: #334155;
 }
 
+/* ---------- Connect Error Banner ---------- */
+
+.connect-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 40px 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.app-container.dark .connect-error {
+  background: #450a0a;
+  color: #fecaca;
+  border-color: #7f1d1d;
+}
+
+.connect-error__text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.connect-error__dismiss {
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.connect-error__dismiss:hover {
+  opacity: 0.85;
+}
+
+/* ---------- Workspace ---------- */
+
+.workspace {
+  flex: 1;
+  display: flex;
+  gap: 0;
+  min-height: 0;
+  margin: 0 40px 20px;
+}
+
+.workspace .flow-container {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0 12px 12px 0;
+  overflow: hidden;
+  background: white;
+}
+
+.app-container.dark .sidebar {
+  background: #1e293b;
+  border-left-color: #334155;
+}
+
+.sidebar .properties-panel {
+  width: auto;
+  border-left: none;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  max-height: 45%;
+  overflow-y: auto;
+}
+
+.app-container.dark .sidebar .properties-panel {
+  border-bottom-color: #334155;
+}
+
+/* ---------- Properties Panel ---------- */
+
+.properties-panel {
+  padding: 20px 16px;
+  background: transparent;
+}
+
+.properties-panel h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.properties-panel--empty .properties-panel__hint {
+  font-size: 13px;
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
+.properties-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.properties-panel__type {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6366f1;
+}
+
+.properties-panel__id {
+  font-size: 11px;
+  opacity: 0.55;
+}
+
+.properties-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.properties-field span {
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.properties-field input,
+.properties-field textarea {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #f8fafc;
+  color: inherit;
+  resize: vertical;
+}
+
+.app-container.dark .properties-field input,
+.app-container.dark .properties-field textarea {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.properties-field input:focus,
+.properties-field textarea:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}
+
 /* ---------- Flow Container ---------- */
 
 .flow-container {
   flex: 1;
-  margin: 20px 40px;
-  border-radius: 12px;
+  border-radius: 12px 0 0 12px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: none;
 }
 
 .app-container.dark .flow-container {
-  border: 1px solid #1e293b;
+  border-color: #1e293b;
 }
 
-/* ---------- Custom Node ---------- */
+/* ---------- Workflow Nodes ---------- */
 
-.custom-node {
-  padding: 10px;
-  border-radius: 8px;
-  min-width: 140px;
+.workflow-node {
+  position: relative;
+  padding: 12px 14px 18px;
+  border-radius: 10px;
+  min-width: 150px;
   text-align: center;
   background: white;
   color: #0f172a;
   border: 2px solid transparent;
   font-size: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-.app-container.dark .custom-node {
+.app-container.dark .workflow-node {
   background: #1e293b;
   color: white;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
-.custom-node.selected {
-  border: 2px solid #6366f1;
+.workflow-node.selected {
+  border-color: #6366f1;
 }
 
-.node-input {
-  border: none;
-  outline: none;
-  background: transparent;
-  text-align: center;
-  width: 100%;
-  color: inherit;
-  font-weight: 500;
+.workflow-node__badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.workflow-node__label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.workflow-node__handles-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 10px;
+  opacity: 0.6;
+  padding: 0 8px;
+}
+
+.workflow-node--start {
+  border-top: 4px solid #22c55e;
+}
+
+.workflow-node--process {
+  border-top: 4px solid #6366f1;
+}
+
+.workflow-node--decision {
+  border-top: 4px solid #f59e0b;
+  min-width: 170px;
+}
+
+.workflow-node--end {
+  border-top: 4px solid #ef4444;
+}
+
+.workflow-node--running {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+  animation: pulse-running 1.2s ease-in-out infinite;
+}
+
+.workflow-node--completed {
+  border-color: #22c55e !important;
+  opacity: 0.92;
+}
+
+.workflow-node--skipped {
+  opacity: 0.45;
+}
+
+.workflow-node__status {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.workflow-node__status--running {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.workflow-node__status--completed {
+  background: #22c55e;
+  color: #0f172a;
+}
+
+.workflow-node__status--skipped {
+  background: #94a3b8;
+  color: #0f172a;
+}
+
+@keyframes pulse-running {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.35);
+  }
+}
+
+/* ---------- Execution Log ---------- */
+
+.execution-log-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.execution-log-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.execution-log-panel h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.execution-status {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.execution-status--idle {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.execution-status--running {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.execution-status--completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.execution-status--error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.app-container.dark .execution-status--idle {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.execution-log-panel__topo {
+  font-size: 11px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.execution-log-panel__topo-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #6366f1;
+}
+
+.execution-log-panel__list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.execution-log-panel__empty {
+  font-size: 13px;
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
+.execution-log-entry {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+}
+
+.app-container.dark .execution-log-entry {
+  border-color: #334155;
+}
+
+.execution-log-entry__meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.execution-log-entry__event {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.execution-log-entry__step {
+  opacity: 0.6;
+  font-size: 10px;
+}
+
+.execution-log-entry--start {
+  border-left: 3px solid #38bdf8;
+}
+
+.execution-log-entry--complete {
+  border-left: 3px solid #22c55e;
+}
+
+.execution-log-entry--decision {
+  border-left: 3px solid #f59e0b;
+}
+
+.execution-log-entry--skip {
+  border-left: 3px solid #94a3b8;
+  opacity: 0.75;
+}
+
+/* ---------- Run Controls ---------- */
+
+.run-button {
+  background: #22c55e;
+}
+
+.stop-button {
+  background: #ef4444;
+}
+
+.reset-button {
+  background: #64748b;
+}
+
+.workflow-handle {
+  width: 10px !important;
+  height: 10px !important;
+  background: #6366f1 !important;
+  border: 2px solid white !important;
+}
+
+.workflow-handle--true {
+  left: 25% !important;
+}
+
+.workflow-handle--false {
+  left: 75% !important;
+}
+
+.custom-node {
+  display: none;
 }
 
 /* ---------- ReactFlow Controls Fix ---------- */
