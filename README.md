@@ -1,48 +1,78 @@
 # Visual Workflow Builder
 
-A simple visual workflow editor built using **React** and **React Flow**.
-
-This project allows users to create nodes, connect them, edit labels, and organize workflows using different layout styles. It was built to better understand how graph-based UIs work and how node positioning affects rendering.
+A visual workflow editor built with **React** and **React Flow**. Create workflows on a canvas, save them as JSON, and simulate how they would run step by step.
 
 ---
 
-## ✨ Features
-
-- Add and delete nodes dynamically  
-- Connect nodes with edges  
-- Edit node labels inline  
-- Switch between light and dark themes  
-- Apply different layout styles:
-  - Vertical  
-  - Horizontal  
-  - Circular  
-- Automatic saving using localStorage  
-
----
-
-## 📸 Preview
+## Preview
 
 <p align="center">
-  <img src="./assets/preview.png" width="850" />
+  <img src="./assets/preview.png" width="850" alt="Visual Workflow Builder preview" />
 </p>
 
 ---
 
-## 🛠 Tech Stack
+## Features
 
-- React  
-- React Flow (@xyflow/react)  
-- Vite  
-- CSS  
+- **Drag-and-drop canvas** — add nodes, connect edges, zoom and pan
+- **DAG validation** — blocks cycles when you connect nodes
+- **Typed nodes** — Start, Process, Decision, End
+- **Properties panel** — edit labels, descriptions, duration, and conditions
+- **Save & load** — export/import JSON, auto-save to browser storage
+- **Undo / Redo** — `Ctrl+Z` and `Ctrl+Y`
+- **Run simulator** — executes the workflow in order with live highlights and logs
+- **Themes & layouts** — light/dark mode, vertical, horizontal, and circular layouts
 
 ---
 
-## 📐 Layout Implementation
+## Tech stack
 
-The layouts in this project are implemented manually instead of relying on external graph layout libraries.
+React · React Flow · Vite · CSS
 
-- **Vertical Layout** positions nodes with consistent vertical spacing.  
-- **Horizontal Layout** aligns nodes in a row with fixed horizontal gaps.  
-- **Circular Layout** distributes nodes evenly using trigonometric positioning (sine and cosine).  
+---
 
-This helped in understanding how coordinate systems and positioning work inside graph-based interfaces.
+## Getting started
+
+```bash
+git clone https://github.com/akriti311/visual-workflow-builder.git
+cd visual-workflow-builder
+npm install
+npm run dev
+```
+
+Open the URL shown in the terminal (usually `http://localhost:5173`).
+
+---
+
+## How to use
+
+1. Click **Add Node** and pick a type (Start, Process, Decision, End).
+2. Connect nodes by dragging from the bottom handle to another node's top handle.
+3. Click a node to edit it in the **Properties** panel on the right.
+4. Click **Run** to simulate the workflow. Watch nodes highlight and check the **Execution Log**.
+5. Use **Export** / **Import** to save or load workflows as JSON files.
+
+### Quick example
+
+Build a simple flow: **Start → Process → End**, then click **Run**.
+
+For a Decision node, set a condition like `stock > 0` — the simulator picks the True or False branch.
+
+---
+
+## Project structure
+
+```
+src/
+├── graph/        # DAG validation, topological sort
+├── engine/       # Workflow execution
+├── persistence/  # JSON save/load
+├── hooks/        # App state
+└── components/   # UI (canvas, nodes, panels)
+```
+
+---
+
+## Author
+
+**Akriti Agrawal** — [GitHub](https://github.com/akriti311)
